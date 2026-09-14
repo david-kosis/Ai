@@ -1,0 +1,54 @@
+{
+  "experiment": "localhost_tcp_baseline",
+  "dataset": {
+    "rows": 100000,
+    "country": "Nigeria",
+    "min_year": 2020,
+    "matched_rows": 3966,
+    "seed": 42
+  },
+  "runs_per_strategy": 10,
+  "latency_statistic": "median",
+  "results": {
+    "raw_transfer": {
+      "payload_bytes": 3383263,
+      "wire_bytes": 3383271,
+      "median_elapsed_ms": 5.768498,
+      "min_elapsed_ms": 4.168809,
+      "max_elapsed_ms": 17.282155
+    },
+    "filter_pushdown": {
+      "payload_bytes": 140157,
+      "wire_bytes": 140165,
+      "median_elapsed_ms": 0.243394,
+      "min_elapsed_ms": 0.212834,
+      "max_elapsed_ms": 0.282537
+    },
+    "projection_pushdown": {
+      "payload_bytes": 27345,
+      "wire_bytes": 27353,
+      "median_elapsed_ms": 0.13223,
+      "min_elapsed_ms": 0.115791,
+      "max_elapsed_ms": 0.272552
+    },
+    "aggregate_pushdown": {
+      "payload_bytes": 24,
+      "wire_bytes": 32,
+      "median_elapsed_ms": 0.106813,
+      "min_elapsed_ms": 0.082061,
+      "max_elapsed_ms": 0.346062
+    }
+  },
+  "finding": {
+    "aggregate_payload_reduction_vs_raw_pct": 99.999291,
+    "aggregate_wire_reduction_vs_raw_pct": 99.999054,
+    "aggregate_is_correct": true,
+    "interpretation": "For this selective analytical workload, reducing the transferred information dominates the local TCP transfer cost. This validates the direction of precision data movement, but does not establish novelty or cloud-scale performance."
+  },
+  "limitations": [
+    "The network path is localhost TCP, not a real remote network.",
+    "Serialization is a compact text format, not a production storage format.",
+    "Only one workload and one selectivity point are represented here.",
+    "CPU, memory, energy and remote-network effects require additional experiments."
+  ]
+}
