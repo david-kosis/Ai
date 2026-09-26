@@ -1,0 +1,48 @@
+name: X News Bot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: x-news-bot
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: x-news-bot/requirements.txt
+      - run: python -m pip install -r requirements.txt pytest
+      - run: pytest -q
+
+  bot:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: x-news-bot
+    env:
+      NEWS_FEEDS: ${{ vars.NEWS_FEEDS }}
+      MAX_POSTS_PER_RUN: ${{ vars.MAX_POSTS_PER_RUN || '3' }}
+      MAX_NEWS_AGE_HOURS: ${{ vars.MAX_NEWS_AGE_HOURS || '24' }}
+      X_ENABLED: ${{ vars.X_ENABLED || 'false' }}
+      X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: x-news-bot/requirements.txt
+      - run: python -m pip install -r requirements.txt
+      - name: Run FourBot
+        run: python -m x_news_bot
